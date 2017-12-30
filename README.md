@@ -13,7 +13,7 @@ You should install `ethereum`. I just do it following [this](https://github.com/
 ### Launch an instance
 
 ```
-GETH=geth bash /path/to/eth-utils/gethup.sh <rootdir> <dd> <run> <params>...
+GETH=geth bash /path/to/geth-utils/gethup.sh <rootdir> <dd> <run> <params>...
 ```
 
 This will
