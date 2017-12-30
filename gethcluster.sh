@@ -21,48 +21,48 @@
 # - you can supply additional params on the command line which will be passed
 #   to each node, for instance `-mine`
 
-
-root=$1
-shift
-network_id=$1
-dir=$root/$network_id
-mkdir -p $dir/data
-mkdir -p $dir/log
-shift
-N=$1
-shift
-ip_addr=$1
-shift
-
+ROOT=$1
+echo "ROOT = $ROOT"
+N=$2
+echo "N = $N"
+NETWORK_ID=$3
+echo "NETWORK_ID = $NETWORK_ID"
+DIR=$ROOT/$NETWORK_ID
+RUNID=$4
+echo "RUNID = $RUNID"
+IP_ADDR=$5
+echo "IP_ADDR = $IP_ADDR"
+mkdir -p $DIR/data
+mkdir -p $DIR/log
 # GETH=geth
 
-if [ ! -f "$dir/nodes"  ]; then
+if [ ! -f "$DIR/nodes"  ]; then
 
-  echo "[" >> $dir/nodes
+  echo "[" >> $DIR/nodes
   for ((i=0;i<N;++i)); do
     id=`printf "%02d" $i`
-    if [ ! $ip_addr="" ]; then
+    if [ ! $IP_ADDR="" ]; then
       ip_addr="[::]"
     fi
 
     echo "getting enode for instance $id ($i/$N)"
-    eth="$GETH --datadir $dir/data/$id --port 303$id --networkid $network_id"
+    eth="$GETH --datadir $DIR/data/$id --port 303$id --networkid $NETWORK_ID"
     cmd="$eth js <(echo 'console.log(admin.nodeInfo.enode); exit();') "
     echo $cmd
-    bash -c "$cmd" 2>/dev/null |grep enode | perl -pe "s/\[\:\:\]/$ip_addr/g" | perl -pe "s/^/\"/; s/\s*$/\"/;" | tee >> $dir/nodes
+    bash -c "$cmd" 2>/dev/null |grep enode | perl -pe "s/\[\:\:\]/$IP_ADDR/g" | perl -pe "s/^/\"/; s/\s*$/\"/;" | tee >> $DIR/nodes
     if ((i<N-1)); then
-      echo "," >> $dir/nodes
+      echo "," >> $DIR/nodes
     fi
   done
-  echo "]" >> $dir/nodes
+  echo "]" >> $DIR/nodes
 fi
 
 for ((i=0;i<N;++i)); do
   id=`printf "%02d" $i`
-  # echo "copy $dir/data/$id/static-nodes.json"
-  mkdir -p $dir/data/$id
+  #echo "copy $DIR/data/$id/static-nodes.json"
+  mkdir -p $DIR/data/$id
   # cp $dir/nodes $dir/data/$id/static-nodes.json
-  echo "launching node $i/$N ---> tail-f $dir/log/$id.log"
-  echo GETH=$GETH bash ./gethup.sh $dir $id --networkid $network_id $*
-  GETH=$GETH bash ./gethup.sh $dir $id --networkid $network_id $*
+  echo "launching node $i/$N ---> tail-f $DIR/log/$id.log"
+  echo GETH=$GETH bash ./gethup.sh $dir $id --networkid $NETWORK_ID $*
+  GETH=$GETH bash ./gethup.sh $DIR $id --networkid $NETWORK_ID $*
 done
