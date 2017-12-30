@@ -14,7 +14,8 @@ shift
 # GETH=geth
 
 # geth CLI params       e.g., (dd=04, run=09)
-datetag=`date "+%c%y%m%d-%H%M%S"|cut -d ' ' -f 5`
+datetag=`date "+%Y%m%d%H%M%S"` # there are two shell command  `date` and `cut`
+#echo "$datetag"
 datadir=$root/data/$dd        # /tmp/eth/04
 log=$root/log/$dd.$datetag.log     # /tmp/eth/04.09.log
 linklog=$root/log/$dd.current.log     # /tmp/eth/04.09.log
@@ -53,6 +54,7 @@ cp -R $root/keystore/$dd/keystore/ $datadir/keystore/
 
 BZZKEY=`$GETH --datadir=$datadir account list|head -n1|perl -ne '/([a-f0-9]{40})/ && print $1'`
 
+#echo "$BZZKEY"
 # bring up node `dd` (double digit)
 # - using <rootdir>/<dd>
 # - listening on port 303dd, (like 30300, 30301, ...)
@@ -60,22 +62,21 @@ BZZKEY=`$GETH --datadir=$datadir account list|head -n1|perl -ne '/([a-f0-9]{40})
 # - launching json-rpc server on port 81dd (like 8100, 8101, 8102, ...)
 echo "$GETH --datadir=$datadir \
   --identity="$dd" \
-  --bzzaccount=$BZZKEY --bzzport=86$dd \
   --port=$port \
   --unlock=$BZZKEY \
   --password=<(echo -n $dd) \
   --rpc --rpcport=$rpcport --rpccorsdomain='*' $* \
-  2>&1 | tee "$stablelog" > "$log" &  # comment out if you pipe it to a tty etc.
+  2>&1 | tee "$stablelog" > "$log" #&  # comment out if you pipe it to a tty etc.
 "
 
 $GETH --datadir=$datadir \
   --identity="$dd" \
-  --bzzaccount=$BZZKEY --bzzport=86$dd \
+  #--bzzaccount=$BZZKEY --bzzport=86$dd \
   --port=$port \
   --unlock=$BZZKEY \
   --password=<(echo -n $dd) \
   --rpc --rpcport=$rpcport --rpccorsdomain='*' $* \
-   2>&1 | tee "$stablelog" > "$log" &  # comment out if you pipe it to a tty etc.
-
+   2>&1 | tee "$stablelog" > "$log" #&  # comment out if you pipe it to a tty etc.
+## when we use & -- the thread will be run Background
 # to bring up logs, uncomment
 # tail -f $log

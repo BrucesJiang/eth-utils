@@ -7,11 +7,13 @@ ethereum utilities, dev tools, scripts, etc
 * `netstatconf.sh`: auto-generate the json config of your local cluster for netstat (https://github.com/ethereum/go-ethereum/wiki/Setting-up-monitoring-on-local-cluster)
 
 ##  Usage
+First of All
 
-### Launch an instance 
+You should install `ethereum`. I just do it following [this](https://github.com/ethereum/go-ethereum/wiki/Installation-Instructions-for-Ubuntu) through `apt-get`
+### Launch an instance
 
 ```
-GETH=./geth bash /path/to/eth-utils/gethup.sh <rootdir> <dd> <run> <params>...
+GETH=geth bash /path/to/eth-utils/gethup.sh <rootdir> <dd> <run> <params>...
 ```
 
 This will
@@ -21,17 +23,17 @@ This will
 - listening on port _303dd_, (like 30300, 30301, ...)
 - with the account unlocked
 - launching json-rpc server on port _81dd_ (like 8100, 8101, 8102, ...)
-- extra params are passed to `geth` 
+- extra params are passed to `geth`
 
 ```
-$ GETH=./geth bash ~/eth-utils/gethup.sh ~/tmp/eth/ 04 09 --mine console 
+$ GETH=./geth bash ~/eth-utils/gethup.sh ~/tmp/eth/ 04 09 --mine console
 Welcome to the FRONTIER
 > eth.getBalance(eth.coinbase)
 '198400000000001'
 >
 ```
 
-### Launch a cluster 
+### Launch a cluster
 Running a cluster of 8 instances under dir `tmp/eth/` isolated on local eth network (id 3301), launch 05. Give external IP and pass extra param `--mine`.
 
 ```
@@ -40,7 +42,7 @@ GETH=./geth bash gethcluster.sh <root> <n> <network_id> <runid> <IP> [[params]..
 
 This will set up a local cluster of nodes
 - `<n>` is the number of clusters
-- `<root>` is the root directory for the cluster, the nodes are set up 
+- `<root>` is the root directory for the cluster, the nodes are set up
   with datadir `<root>/00`, `<root>/01`, ...
 - new accounts are created for each node
 - they listening on port _303dd_ (like 30300, 30301, ...)
@@ -50,16 +52,16 @@ This will set up a local cluster of nodes
 - if `<network_id>` is not 0, they will not connect to a default client,
   resulting in a private isolated network
 - the nodes log into `<root>/00.<runid>.log`, `<root>/01.<runid>.log`, ...
-- `<runid>` is just an arbitrary tag or index you can use to log multiple 
+- `<runid>` is just an arbitrary tag or index you can use to log multiple
   subsequent launches of the same cluster, I recommend sequential double digit ids
 - the cluster can be killed with `killall -QUIT geth` (FIXME: should record PIDs)
 - the nodes can be restarted from the same state individually using the `gethup.sh` script
 - if you want to interact with the nodes, use a json-rpc client
-- you can supply additional params on the command line which will be passed 
+- you can supply additional params on the command line which will be passed
   to `gethup.sh` and eventually to `geth` for each node, for instance `-vmodule=http=6 -mine -minerthreads=8` is a good one.
 
 ```
-GETH=./geth bash gethcluster.sh ./leagues/3301/cicada 2 3301 05 77.160.58.3 -mine 
+GETH=./geth bash gethcluster.sh ./leagues/3301/cicada 2 3301 05 77.160.58.3 -mine
 launching node 0/2 ---> tail -f ./leagues/3301/cicada/00.05.log
 Welcome to the FRONTIER
 launching node 1/2 ---> tail -f ./leagues/3301/cicada/01.05.log
@@ -85,7 +87,7 @@ You can kill and restart individual nodes or the entire cluster safely, by using
 killall -QUIT geth
 ```
 
-Using the `-QUIT` signal is very useful because it dumps the stacktrace into the glog file which you can attach to any bugreport or issue. 
+Using the `-QUIT` signal is very useful because it dumps the stacktrace into the glog file which you can attach to any bugreport or issue.
 
 ### Monitor your local cluster:
 
@@ -101,7 +103,7 @@ npm install
 ####Configuring netstat for your cluster
 
 ```
-bash /path/to/eth-utils/netstatconf.sh <number_of_clusters> <name_prefix> <ws_server> <ws_secret> 
+bash /path/to/eth-utils/netstatconf.sh <number_of_clusters> <name_prefix> <ws_server> <ws_secret>
 ```
 
 - will output resulting app.json to stdout
@@ -146,7 +148,7 @@ pm2 start ~/leagues/3301/cicada.json
 ```
 
 
-####Starting the monitor 
+####Starting the monitor
 
 Use your own eth-netstat server to monitor a league on a port corresponding to a league
 
